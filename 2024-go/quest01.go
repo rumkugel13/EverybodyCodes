@@ -1,11 +1,13 @@
 package main
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func quest01() {
 	// sample01 := "ABBAC"
-	input := getLines("input/q01_p1.txt")[0]
+	input := ReadLines("input/q01_p1.txt")[0]
 
 	sum := 0
 	for i := 0; i < len(input); i++ {
@@ -20,7 +22,7 @@ func quest01() {
 
 	fmt.Println("Quest 01 Part 1:", sum)
 
-	input = getLines("input/q01_p2.txt")[0]
+	input = ReadLines("input/q01_p2.txt")[0]
 	sum = 0
 	potions := map[byte]int{
 		'A': 0,
@@ -41,12 +43,12 @@ func quest01() {
 	fmt.Println("Quest 01 Part 2:", sum)
 
 	// sample03 := "xBxAAABCDxCC"
-	input = getLines("input/q01_p3.txt")[0]
+	input = ReadLines("input/q01_p3.txt")[0]
 	sum = 0
 
 	for i := 0; i < len(input); i += 3 {
 		count := strings.Count(input[i:i+3], "x")
-		
+
 		if count == 2 {
 			sum += potions[input[i]] + potions[input[i+1]] + potions[input[i+2]]
 		} else if count == 1 {

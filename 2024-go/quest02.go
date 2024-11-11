@@ -1,11 +1,13 @@
 package main
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func quest02() {
 	// sample := []string{"WORDS:THE,OWE,MES,ROD,HER", "", "AWAKEN THE POWER ADORNED WITH THE FLAMES BRIGHT IRE"}
-	input := getLines("input/q02_p1.txt")
+	input := ReadLines("input/q02_p1.txt")
 
 	words := make(map[string]int)
 	wordList := strings.Split(input[0], ":")[1]
@@ -34,7 +36,7 @@ func quest02() {
 	// 	"THE FLAME SHIELDED THE HEART OF THE KINGS",
 	// 	"POWE PO WER P OWE R",
 	// 	"THERE IS THE END"}
-	input = getLines("input/q02_p2.txt")
+	input = ReadLines("input/q02_p2.txt")
 	words = make(map[string]int)
 	wordList = strings.Split(input[0], ":")[1]
 	max = 0
@@ -68,7 +70,7 @@ func quest02() {
 	// 	"HELWORLT",
 	// 	"ENIGWDXL",
 	// 	"TRODEOAL"}
-	input = getLines("input/q02_p3.txt")
+	input = ReadLines("input/q02_p3.txt")
 	words = make(map[string]int)
 	wordList = strings.Split(input[0], ":")[1]
 	max = 0

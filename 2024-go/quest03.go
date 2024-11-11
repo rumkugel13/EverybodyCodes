@@ -11,21 +11,21 @@ func quest03() {
 	// 	"..######..",
 	// 	"...####...",
 	// 	".........."}
-	input := getLines("input/q03_p1.txt")
+	input := ReadLines("input/q03_p1.txt")
 	grid := q3_grid(input)
 	grid = q3_dig(grid)
 	count := q3_count(grid)
 
 	fmt.Println("Quest 03 Part 1:", count)
 
-	input = getLines("input/q03_p2.txt")
+	input = ReadLines("input/q03_p2.txt")
 	grid = q3_grid(input)
 	grid = q3_dig(grid)
 	count = q3_count(grid)
 
 	fmt.Println("Quest 03 Part 2:", count)
 
-	input = getLines("input/q03_p3.txt")
+	input = ReadLines("input/q03_p3.txt")
 	grid = q3_grid(input)
 	grid = q3_digdiagonal(grid)
 	count = q3_count(grid)
@@ -50,11 +50,7 @@ func q3_dig(grid [][]int) [][]int {
 	changed := true
 	for changed {
 		changed = false
-		duplicate := make([][]int, len(grid))
-		for i := range grid {
-			duplicate[i] = make([]int, len(grid[i]))
-			copy(duplicate[i], grid[i])
-		}
+		duplicate := Duplicate(grid)
 
 		for row := 1; row < len(grid)-1; row++ {
 			for col := 1; col < len(grid[row])-1; col++ {
@@ -81,11 +77,8 @@ func q3_digdiagonal(grid [][]int) [][]int {
 	changed := true
 	for changed {
 		changed = false
-		duplicate := make([][]int, len(grid))
-		for i := range grid {
-			duplicate[i] = make([]int, len(grid[i]))
-			copy(duplicate[i], grid[i])
-		}
+		duplicate := Duplicate(grid)
+
 		for row := 1; row < len(grid)-1; row++ {
 			for col := 1; col < len(grid[row])-1; col++ {
 				num := grid[row][col]
