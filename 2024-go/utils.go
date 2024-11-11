@@ -17,3 +17,7 @@ func Reverse(s string) string {
     }
     return string(r)
 }
+
+type Point struct {
+	row, col int
+}
