@@ -7,4 +7,5 @@ func main() {
 	quest01()
 	quest02()
 	quest03()
+	quest04()
 }
