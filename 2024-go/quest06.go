@@ -6,7 +6,6 @@ import (
 )
 
 func quest06() {
-	fmt.Println("Quest 06 Part 1:", 0)
 	// sample := []string{
 	// 	"RR:A,B,C",
 	// 	"A:D,E",
