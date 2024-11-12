@@ -48,3 +48,7 @@ func Duplicate[T any](grid [][]T) [][]T {
 	}
 	return duplicate
 }
+
+func Mod(a, n int) int {
+	return ((a % n) + n) % n
+}
