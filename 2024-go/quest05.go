@@ -32,21 +32,18 @@ func quest05() {
 	input = ReadLines("input/q05_p2.txt")
 	cols = q5_cols(input)
 
-	shouted := map[string]int{}
-	round := 0
-	shout := ""
-	for {
+	shouted := map[int]int{}
+	for round := 0; ; round++ {
 		q5_round(&cols, round)
-		shout = q5_number(cols)
+		shout := q5_number(cols)
 		if shouted[shout] == 2023 {
+			result = shout * (round + 1)
 			break
 		}
 		shouted[shout]++
-		round++
 	}
 
-	num, _ := strconv.Atoi(shout)
-	fmt.Println("Quest 05 Part 2:", num*(round+1))
+	fmt.Println("Quest 05 Part 2:", result)
 
 	// sample := []string{
 	// 	"2 3 4 5",
@@ -55,20 +52,16 @@ func quest05() {
 
 	input = ReadLines("input/q05_p3.txt")
 	cols = q5_cols(input)
-	shouted = map[string]int{}
+	shouted = map[int]int{}
 	max := 0
-	for {
+
+	// note: arbitrary limit, adjust if result is wrong
+	for round := 0; round < 2000000; round++ {
 		q5_round(&cols, round)
-		shout = q5_number(cols)
-		num, _ := strconv.Atoi(shout)
+		shout := q5_number(cols)
 		shouted[shout]++
-		round++
-		if num > max {
-			max = num
-		}
-		// note: arbitrary number, adjust if result is wrong
-		if round > 2000000 {
-			break
+		if shout > max {
+			max = shout
 		}
 	}
 
@@ -101,11 +94,12 @@ func q5_round(cols *[][]int, round int) {
 	*column = slices.Insert(*column, pos, clapper)
 }
 
-func q5_number(cols [][]int) string {
+func q5_number(cols [][]int) int {
 	var number string
 	for i := 0; i < len(cols); i++ {
 		char := strconv.Itoa(cols[i][0])
 		number += char
 	}
-	return number
+	num, _ := strconv.Atoi(number)
+	return num
 }
