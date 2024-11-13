@@ -64,10 +64,9 @@ func quest07() {
 
 	total = map[string]int{}
 	for round := 0; round < 10*len(linetrack); round++ {
-		next := q7_next_track(plans, powers, round, linetrack)
-		for key := range plans {
-			total[key] += next[key]
-			powers[key] = next[key]
+		for key, plan := range plans {
+			powers[key] = q7_next_track(plan, powers[key], round, linetrack)
+			total[key] += powers[key]
 		}
 	}
 
@@ -82,43 +81,33 @@ func quest07() {
 
 	// sample := []string{"A:+,-,=,+,-,=,+,-,=,+,+"}
 	input = ReadLines("input/q07_p3.txt")
-	plans = q7_plans(input)
-	powers = map[string]int{}
-	for key := range plans {
-		powers[key] = 10
-	}
+	rival_plan := q7_plans(input)["A"]
 
 	track = ReadLines("input/q07_p3_track.txt")
 	linetrack = q7_track(track)
 
-	total = map[string]int{}
 	// every 11 loops a new cycle begins, because LCM(11,340)=3740
 	// and 3740/340=11, meaning after 11 loops the start of the track and the plans align
 	// since 2024 is a multiple of 11, we can just run 11 loops instead of all of them
 	// and multiply the result by 2024/11=184 (or just skip it since we only check if rival is ahead, not by how much)
 	rounds := 11
+	rival_power := 10
+	rival_total := 0
 	for round := 0; round < rounds*len(linetrack); round++ {
-		next := q7_next_track(plans, powers, round, linetrack)
-		for key := range plans {
-			total[key] += next[key]
-			powers[key] = next[key]
-		}
+		rival_power = q7_next_track(rival_plan, rival_power, round, linetrack)
+		rival_total += rival_power
 	}
-	rival := total["A"]
+
 	winners := 0
 	action_plans := q7_action_plans()
 	for _, plan := range action_plans {
-		plans["A"] = plan
-		powers["A"] = 10
-		total["A"] = 0
+		current_power := 10
+		current_total := 0
 		for round := 0; round < rounds*len(linetrack); round++ {
-			next := q7_next_track(plans, powers, round, linetrack)
-			for key := range plans {
-				total[key] += next[key]
-				powers[key] = next[key]
-			}
+			current_power = q7_next_track(plan, current_power, round, linetrack)
+			current_total += current_power
 		}
-		if total["A"] > rival {
+		if current_total > rival_total {
 			winners++
 		}
 	}
@@ -148,26 +137,21 @@ func q7_action_plans() []string {
 	return result
 }
 
-func q7_next_track(plans map[string]string, powers map[string]int, round int, linetrack string) map[string]int {
-	next := map[string]int{}
-	for key := range plans {
-		next[key] = powers[key]
-		action := plans[key][round%len(plans[key])]
-		if linetrack[(round+1)%len(linetrack)] == '+' {
-			action = '+'
-		} else if linetrack[(round+1)%len(linetrack)] == '-' {
-			action = '-'
-		}
-		switch action {
-		case '+':
-			next[key] += 1
-		case '-':
-			next[key] -= 1
-		case '=':
-			next[key] = powers[key]
-		}
+// note: +1 since track starts with S
+func q7_next_track(plan string, power int, round int, linetrack string) int {
+	action := plan[round%len(plan)]
+	if linetrack[(round+1)%len(linetrack)] == '+' {
+		action = '+'
+	} else if linetrack[(round+1)%len(linetrack)] == '-' {
+		action = '-'
 	}
-	return next
+	switch action {
+	case '+':
+		return power + 1
+	case '-':
+		return power - 1
+	}
+	return power
 }
 
 func q7_track(track []string) string {
