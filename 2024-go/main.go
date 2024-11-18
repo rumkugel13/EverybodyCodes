@@ -12,4 +12,5 @@ func main() {
 	quest06()
 	quest07()
 	quest08()
+	quest09()
 }

@@ -53,5 +53,5 @@ func quest08() {
 	// }
 
 	// result = -available
-	// fmt.Println("Quest 08 Part 3:", result)
+	fmt.Println("Quest 08 Part 3:", "Not implemented yet")
 }
