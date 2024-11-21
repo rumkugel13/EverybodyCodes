@@ -25,6 +25,21 @@ type Point struct {
 	row, col int
 }
 
+func FindInGrid(grid []string, char byte) Point {
+	for row, line := range grid {
+		for col, c := range line {
+			if c == rune(char) {
+				return Point{row, col}
+			}
+		}
+	}
+	return Point{-1, -1}
+}
+
+func InsideGrid(grid []string, pos Point) bool {
+	return pos.col >= 0 && pos.col < len(grid[0]) && pos.row >= 0 && pos.row < len(grid)
+}
+
 func Duplicate[T any](grid [][]T) [][]T {
 	duplicate := make([][]T, len(grid))
 	for i := range grid {
@@ -42,7 +57,7 @@ func DuplicateMap[T comparable, U any](source map[T]U) map[T]U {
 	return duplicate
 }
 
-func SumMap[T comparable, U int|float32|float64](source map[T]U) U {
+func SumMap[T comparable, U int | float32 | float64](source map[T]U) U {
 	var sum U
 	for _, value := range source {
 		sum += value
