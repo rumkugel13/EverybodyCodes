@@ -5,6 +5,15 @@ import (
 	"strings"
 )
 
+var (
+	Directions = [4]Point{
+		{0, 1},
+		{1, 0},
+		{0, -1},
+		{-1, 0},
+	}
+)
+
 func ReadLines(file string) []string {
 	data, err := os.ReadFile(file)
 	if err != nil {

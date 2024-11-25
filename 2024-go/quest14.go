@@ -63,7 +63,7 @@ func quest14() {
 	// 	trunk.y++
 	// }
 
-	// fmt.Println("Quest 14 Part 3:", minMurk)
+	fmt.Println("Quest 14 Part 3:", "Not implemented yet")
 }
 
 // func q14_distance_to_leaves(segment Point3, leaves map[Point3]int) int {
