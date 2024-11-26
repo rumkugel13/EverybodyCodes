@@ -58,7 +58,19 @@ func quest15() {
 
 func q15_collect(grid []string, current, start Point, pois map[Point]byte, herbs map[byte]byte, distStash, collectStash map[string]int) int {
 	if len(herbs) == 0 {
-		return q15_distance(grid, current, start)
+		distKey := strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col) + "-" + strconv.Itoa(start.row) + "-" + strconv.Itoa(start.col)
+		if d, ok := distStash[distKey]; ok {
+			return d
+		}
+		dist := q15_distance(grid, current, start)
+		distStash[distKey] = dist
+		return dist
+	}
+
+	herbsKey := string(slices.Collect(maps.Keys(herbs)))
+	cacheKey := herbsKey + "-" + strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col)
+	if d, ok := collectStash[cacheKey]; ok {
+		return d
 	}
 
 	minDist := math.MaxInt32
@@ -67,30 +79,24 @@ func q15_collect(grid []string, current, start Point, pois map[Point]byte, herbs
 
 		for poi, h := range pois {
 			if h == herb {
-				hash := strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col) + "-" + strconv.Itoa(poi.row) + "-" + strconv.Itoa(poi.col)
+				distKey := strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col) + "-" + strconv.Itoa(poi.row) + "-" + strconv.Itoa(poi.col)
 				poiDist := 0
-				if d, ok := distStash[hash]; ok {
+				if d, ok := distStash[distKey]; ok {
 					poiDist = d
 				} else {
 					poiDist = q15_distance(grid, current, poi)
-					distStash[hash] = poiDist
+					distStash[distKey] = poiDist
 				}
 
-				hash = string(slices.Collect(maps.Keys(herbs))) + "-" + strconv.Itoa(poi.row) + "-" + strconv.Itoa(poi.col) + "-" + strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col)
-				collectDist := 0
-				if d, ok := collectStash[hash]; ok {
-					collectDist = d
-				} else {
-					collectDist = q15_collect(grid, poi, start, pois, herbs, distStash, collectStash)
-					collectStash[hash] = collectDist
-				}
-
+				collectDist := q15_collect(grid, poi, start, pois, herbs, distStash, collectStash)
 				distance := poiDist + collectDist
 				minDist = min(minDist, distance)
 			}
 		}
 		herbs[herb] = herb
 	}
+	
+	collectStash[cacheKey] = minDist
 	return minDist
 }
 
