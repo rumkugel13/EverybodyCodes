@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"slices"
 	"strconv"
-	"maps"
 )
 
 func quest15() {
@@ -20,7 +20,7 @@ func quest15() {
 	// }
 	input := ReadLines("input/q15_p1.txt")
 	start := q15_start(input)
-	pois,_ := q15_pois(input)
+	pois, _ := q15_pois(input)
 	minDist := math.MaxInt32
 	for poi := range pois {
 		distance := q15_distance(input, start, poi)
@@ -44,7 +44,7 @@ func quest15() {
 	input = ReadLines("input/q15_p2.txt")
 	start = q15_start(input)
 	pois, unique := q15_pois(input)
-	result := q15_collect(input, start, start, pois, unique, map[string]int{}, map[string]int{})
+	result := q15_collect(input, start, start, pois, unique, q15_distances(input, start, pois), map[string]int{})
 
 	fmt.Println("Quest 15 Part 2:", result)
 
@@ -56,43 +56,33 @@ func quest15() {
 	// fmt.Println("Quest 15 Part 3:", result)
 }
 
-func q15_collect(grid []string, current, start Point, pois map[Point]byte, herbs map[byte]byte, distStash, collectStash map[string]int) int {
+func q15_collect(grid []string, current, start Point, pois map[Point]byte, herbs map[byte]byte, distances map[int]int, collectStash map[string]int) int {
 	if len(herbs) == 0 {
-		distKey := strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col) + "-" + strconv.Itoa(start.row) + "-" + strconv.Itoa(start.col)
-		if d, ok := distStash[distKey]; ok {
-			return d
-		}
-		dist := q15_distance(grid, current, start)
-		distStash[distKey] = dist
-		return dist
+		distKey := q15_hash(current, start)
+		return distances[distKey]
 	}
 
-	herbsKey := string(slices.Collect(maps.Keys(herbs)))
-	cacheKey := herbsKey + "-" + strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col)
+	cacheKey := string(slices.Collect(maps.Keys(herbs))) + "-" + strconv.Itoa(current.row*256+current.col)
 	if d, ok := collectStash[cacheKey]; ok {
 		return d
 	}
 
 	minDist := math.MaxInt32
-	for _, herb := range herbs {
+	herbKeys := maps.Keys(herbs)
+	for herb := range herbKeys {
 		delete(herbs, herb)
 
 		for poi, h := range pois {
 			if h == herb {
-				distKey := strconv.Itoa(current.row) + "-" + strconv.Itoa(current.col) + "-" + strconv.Itoa(poi.row) + "-" + strconv.Itoa(poi.col)
-				poiDist := 0
-				if d, ok := distStash[distKey]; ok {
-					poiDist = d
-				} else {
-					poiDist = q15_distance(grid, current, poi)
-					distStash[distKey] = poiDist
-				}
+				distKey := q15_hash(current, poi)
+				poiDist := distances[distKey]
 
-				collectDist := q15_collect(grid, poi, start, pois, herbs, distStash, collectStash)
+				collectDist := q15_collect(grid, poi, start, pois, herbs, distances, collectStash)
 				distance := poiDist + collectDist
 				minDist = min(minDist, distance)
 			}
 		}
+
 		herbs[herb] = herb
 	}
 	
@@ -112,6 +102,30 @@ func q15_pois(grid []string) (map[Point]byte, map[byte]byte) {
 		}
 	}
 	return pois, unique
+}
+
+func q15_hash(a, b Point) int {
+	if a.row < b.row || (a.row == b.row && a.col < b.col) {
+		return (a.row*256+a.col)<<16 | (b.row*256 + b.col)
+	} else {
+		return (b.row*256+b.col)<<16 | (a.row*256 + a.col)
+	}
+}
+
+func q15_distances(grid []string, start Point, pois map[Point]byte) map[int]int {
+	distances := map[int]int{}
+	pois[start] = 0
+	for poi := range pois {
+		for poi2 := range pois {
+			if poi != poi2 {
+				distKey := q15_hash(poi, poi2)
+				if _, ok := distances[distKey]; !ok {
+					distances[distKey] = q15_distance(grid, poi, poi2)
+				}
+			}
+		}
+	}
+	return distances
 }
 
 func q15_distance(grid []string, start Point, end Point) int {
