@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"maps"
 	"math"
-	"slices"
 	"strconv"
 )
 
@@ -44,60 +42,62 @@ func quest15() {
 	input = ReadLines("input/q15_p2.txt")
 	start = q15_start(input)
 	pois, unique := q15_pois(input)
-	result := q15_collect(input, start, start, pois, unique, q15_distances(input, start, pois), map[string]int{})
+	result := q15_collect(start, start, pois, unique, q15_distances(input, start, pois), map[string]int{})
 
 	fmt.Println("Quest 15 Part 2:", result)
 
 	// input = ReadLines("input/q15_p3.txt")
 	// start = q15_start(input)
 	// pois, unique = q15_pois(input)
-	// result = q15_collect(input, start, start, pois, unique, map[string]int{}, map[string]int{})
+	// result = q15_collect(start, start, pois, unique, q15_distances(input, start, pois), map[string]int{})
 
-	// fmt.Println("Quest 15 Part 3:", result)
+	fmt.Println("Quest 15 Part 3:", "Not implemented yet")
 }
 
-func q15_collect(grid []string, current, start Point, pois map[Point]byte, herbs map[byte]byte, distances map[int]int, collectStash map[string]int) int {
-	if len(herbs) == 0 {
-		distKey := q15_hash(current, start)
-		return distances[distKey]
-	}
-
-	cacheKey := string(slices.Collect(maps.Keys(herbs))) + "-" + strconv.Itoa(current.row*256+current.col)
+func q15_collect(current, start Point, pois map[Point]byte, herbs uint64, distances map[int]int, collectStash map[string]int) int {
+	cacheKey := strconv.FormatUint(herbs, 10) + "-" + strconv.Itoa(current.row*256+current.col)
 	if d, ok := collectStash[cacheKey]; ok {
 		return d
 	}
 
 	minDist := math.MaxInt32
-	herbKeys := maps.Keys(herbs)
-	for herb := range herbKeys {
-		delete(herbs, herb)
+	for herb := 'A'; herb <= 'Z'; herb++ {
+		idx := (herb - 'A')
+		if (herbs & (1 << idx)) == 0 {
+			continue
+		}
+
+		herbs &= ^(1 << idx)
 
 		for poi, h := range pois {
-			if h == herb {
+			if h == byte(herb) {
 				distKey := q15_hash(current, poi)
-				poiDist := distances[distKey]
+				distance := distances[distKey]
 
-				collectDist := q15_collect(grid, poi, start, pois, herbs, distances, collectStash)
-				distance := poiDist + collectDist
+				if herbs == 0 {
+					distance += distances[q15_hash(poi, start)]
+				} else {
+					distance += q15_collect(poi, start, pois, herbs, distances, collectStash)
+				}
 				minDist = min(minDist, distance)
 			}
 		}
 
-		herbs[herb] = herb
+		herbs |= (1 << idx)
 	}
-	
+
 	collectStash[cacheKey] = minDist
 	return minDist
 }
 
-func q15_pois(grid []string) (map[Point]byte, map[byte]byte) {
+func q15_pois(grid []string) (map[Point]byte, uint64) {
 	pois := map[Point]byte{}
-	unique := map[byte]byte{}
+	unique := uint64(0)
 	for row, line := range grid {
 		for col, char := range line {
 			if char != '#' && char != '.' && char != '~' {
 				pois[Point{row, col}] = byte(char)
-				unique[byte(char)] = byte(char)
+				unique |= (1 << (char - 'A'))
 			}
 		}
 	}
