@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -76,4 +77,14 @@ func SumMap[T comparable, U int | float32 | float64](source map[T]U) U {
 
 func Mod(a, n int) int {
 	return ((a % n) + n) % n
+}
+
+func CommaSepToIntArr(line string) []int {
+	data := strings.Split(line, ",")
+	result := make([]int, len(data))
+	for i, val := range data {
+		num, _ := strconv.Atoi(strings.TrimSpace(val))
+		result[i] = num
+	}
+	return result
 }
