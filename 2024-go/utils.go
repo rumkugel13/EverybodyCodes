@@ -46,6 +46,10 @@ func FindInGrid(grid []string, char byte) Point {
 	return Point{-1, -1}
 }
 
+func Distance(start, end Point) int {
+	return abs(start.row-end.row) + abs(start.col-end.col)
+}
+
 func InsideGrid(grid []string, pos Point) bool {
 	return pos.col >= 0 && pos.col < len(grid[0]) && pos.row >= 0 && pos.row < len(grid)
 }
