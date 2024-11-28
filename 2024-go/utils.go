@@ -79,6 +79,14 @@ func SumMap[T comparable, U int | float32 | float64](source map[T]U) U {
 	return sum
 }
 
+func SumSlice(source []int) int {
+	var sum int
+	for _, value := range source {
+		sum += value
+	}
+	return sum
+}
+
 func Mod(a, n int) int {
 	return ((a % n) + n) % n
 }
