@@ -100,3 +100,22 @@ func CommaSepToIntArr(line string) []int {
 	}
 	return result
 }
+
+func GCD(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+func LCM(a, b int) int {
+	return a * b / GCD(a, b)
+}
+
+func LCMSlice(arr []int) int {
+	result := arr[0]
+	for i := 1; i < len(arr); i++ {
+		result = LCM(result, arr[i])
+	}
+	return result
+}
