@@ -42,6 +42,21 @@ func quest19() {
 	result = q19_message(cells)
 	fmt.Println("Quest 19 Part 2:", result)
 
+	// input = ReadLines("input/q19_p3.txt")
+	// key = input[0]
+	// cells = q19_cells(input[2:])
+	// for range 1048576000 {
+	// 	iteration := 0
+	// 	for row := 1; row < len(cells)-1; row++ {
+	// 		for col := 1; col < len(cells[0])-1; col++ {
+	// 			dir := key[iteration%len(key)]
+	// 			iteration++
+	// 			q19_rotate(cells, row, col, dir)
+	// 		}
+	// 	}
+	// }
+
+	// result = q19_message(cells)
 	fmt.Println("Quest 19 Part 3:", "Not implemented yet")
 }
 

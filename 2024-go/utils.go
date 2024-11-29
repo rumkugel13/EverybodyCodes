@@ -35,6 +35,10 @@ type Point struct {
 	row, col int
 }
 
+func (point *Point) Add(other Point) Point {
+	return Point{point.row + other.row, point.col + other.col}
+}
+
 func FindInGrid(grid []string, char byte) Point {
 	for row, line := range grid {
 		for col, c := range line {

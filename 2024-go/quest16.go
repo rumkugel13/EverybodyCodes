@@ -57,6 +57,8 @@ func quest16() {
 	}
 
 	fmt.Println("Quest 16 Part 2:", totalCoins)
+
+	fmt.Println("Quest 16 Part 3:", "Not implemented yet")
 }
 
 func q16_coins(faces [][]string, positions []int) int {
